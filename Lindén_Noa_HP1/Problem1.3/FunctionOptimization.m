@@ -59,13 +59,15 @@ function [maximumFitness, xBest] = GA(muteateProb)
     for i=1:nGenerations
         xVars = zeros(popSize, nVar);
         for j = 1:popSize
-            xVars(j,:) = DecodeChromosome(population(j,:), nVar, d); 
+            chromosome = population(j,:);
+            xVars(j,:) = DecodeChromosome(chromosome, nVar, d); 
         end
 
         % Calculate the fitness of the population
         fitness = zeros(popSize, 1);
         for j=1:popSize
-            fitness(j, 1) = EvaluateIndividual(xVars(j,:));
+            xVar = xVars(j,:);
+            fitness(j, 1) = EvaluateIndividual(xVar);
         end
 
         % Find and save the best individual
@@ -97,7 +99,8 @@ function [maximumFitness, xBest] = GA(muteateProb)
         
         % Mutate the new individuals
         for j=1:popSize
-            newPopulation(j,:) = Mutate(newPopulation(j,:), mutateProbability);
+            newIndividual = newPopulation(j,:);
+            newPopulation(j,:) = Mutate(newIndividual, mutateProbability);
         end
         
 
@@ -105,6 +108,8 @@ function [maximumFitness, xBest] = GA(muteateProb)
         population = InsertBestIndividual(newPopulation, bestIndividual, nCopiesOfBest);
     end
     
-    xBest = DecodeChromosome(population(1,:), nVar, d);
+    % Save the xVars of the best individual so that it can be returned
+    bestIndividual = population(1,:);
+    xBest = DecodeChromosome(bestIndividual, nVar, d);
 end
 
